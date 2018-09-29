@@ -88,7 +88,6 @@ var loopReadVideo = function(){
     }
     kConsoleLog('======= once read =======')
     var timestart = (new Date()).getTime();
-    var barDataEl = document.getElementById('status');
 
     var video = $('#theVideo')[0];
     barcodeReader.decodeVideo(video).then((results)=>{
@@ -96,7 +95,8 @@ var loopReadVideo = function(){
         for(var i=0;i<results.length;++i){
             var result = results[i];
             kConsoleLog(result.BarcodeText);
-            barDataEl.innerHTML  += result.BarcodeText+ '</br>';
+
+            cartitem(result.BarcodeText);
 
         }
         // video in safair would stuck, so leave 2s for adjusting video
@@ -107,3 +107,42 @@ var loopReadVideo = function(){
         throw ex;
     });
 };
+
+
+
+
+function cartitem(data)
+{
+  var list=document.getElementById('todo');
+
+  var item= document.createElement('li');
+  item.innerText=data;
+
+  var buttondiv=document.createElement('div');
+
+  var remove=document.createElement('button');
+
+  var t = document.createTextNode("Remove");
+
+  list.appendChild(item);
+
+  item.appendChild(buttondiv);
+
+  buttondiv.appendChild(remove);
+
+  remove.appendChild(t);
+
+
+  remove.addEventListener('click',removeitem);
+
+
+  remove.className += "mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored mdl-color-text--white";
+}
+
+
+function removeitem()
+{
+  var item=this.parentNode.parentNode;
+  var parent=item.parentNode;
+  parent.removeChild(item);
+}
