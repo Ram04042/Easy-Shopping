@@ -115,6 +115,38 @@ right:10px;
   width:100%;
 }
 
+.pricediv
+{
+
+
+  float:right;
+}
+
+.quantitydiv input
+{
+  float:right;
+  width:20%;
+  margin-left: 15px;
+}
+
+.linepricediv
+{
+    float:right;
+    position:absolute;
+    top:55%;
+    right:10px;
+}
+
+#totalprice
+{
+
+  float: right;
+  text-align: right;
+    clear: both;
+    width: 100%;
+    margin-bottom: 10px;
+
+}
 /*
 1.Budget Setter
 2.Sort by price
@@ -132,6 +164,30 @@ right:10px;
 1.MAP
 
 1.Login section    rahul kar ra hai na?? haa
+
+
+isme kya karega ??
+purchase hist tho cust ka database banane ke baad hi chalu karsakte hai
+Map ka kuch kar sakte
+
+aisa kuch na??
+
+kya hua?? kuch nahi pak raha hai isliye kya kar ra hai dekha
+movie dek  koko dekh ke ho gayame
+me kuch du kya bol mere pas stock hai
+mere pas bohot kuch  dekne ke liye hai par kaam bhi hai na
+
+ni tho aur kisi ko puchte hai relating to iot or something
+Ok baad me sochte chod abhi
+ok bye me jara hu abhi
+tere pas maam ka ajax files haikya jo maam ne sikhaya that
+ni re
+ek baar saiprasad ko puchke de shyad uske pas add_shopping_cartokkokokokokoko
+baap tha who echo
+kon
+phle namrata maam ko puchte hai{
+
+}
 */
 
 
@@ -209,7 +265,7 @@ right:10px;
 
         <header class="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
           <div class="mdl-layout__header-row">
-            <span class="mdl-layout-title">Home</span>
+            <span class="mdl-layout-title">Preplan Purchase</span>
             <div class="mdl-layout-spacer"></div>
 
         </header>
@@ -266,7 +322,7 @@ right:10px;
                 <p>Cart Items</p>
                 <ul class="todo" id="todo"></ul>
 
-
+                <div id="totalprice"></div>
             </div>
           </div>
         </main>
@@ -284,7 +340,7 @@ right:10px;
                            data:{query:query},
                            success:function(data)
                            {
-                                alert(data);
+
                                 $('#countryList').fadeIn();
                                 $('#countryList').html(data);
                            }
@@ -300,7 +356,9 @@ right:10px;
 
        var addcart=document.getElementById('addcart');
 
-       addcart.addEventListener("click", function(){
+       addcart.addEventListener("click", add);
+
+       function add(){
 
          var input=document.getElementById('country').value;
 
@@ -310,7 +368,19 @@ right:10px;
          var item= document.createElement('li');
          item.innerText=input;
 
+         var quantitydiv=document.createElement('div');
+
+         var pricediv=document.createElement('div');
+
          var buttondiv=document.createElement('div');
+
+         var linepricediv=document.createElement('div');
+
+         var inp = document.createElement("INPUT");
+         inp.setAttribute("type", "number");
+         inp.setAttribute("value","1");
+         inp.setAttribute("id","quantity");
+
 
          var remove=document.createElement('button');
 
@@ -321,25 +391,35 @@ right:10px;
               url:"pdetails.php",
               method:"POST",
               data:{query:query1},
-              success:function(data)
+              success:function(response)
               {
-                console.log(data);
-                item.innertext=data;
+                response = jQuery.parseJSON(response);
+
+                    pricediv.innerHTML=response.message;
+
+                    linepricediv.innerHTML=response.message;
 
               }
          });
 
 
-
-
-
-
-
          list.appendChild(item);
+
+         item.appendChild(linepricediv);
+
+         item.appendChild(quantitydiv);
+         quantitydiv.appendChild(inp);
+         item.appendChild(pricediv);
          item.appendChild(buttondiv);
          buttondiv.appendChild(remove);
 
+
+         linepricediv.classList.add('linepricediv');
          buttondiv.classList.add('butt');
+         pricediv.classList.add('pricediv');
+         quantitydiv.classList.add('quantitydiv');
+
+
 
 
 
@@ -350,7 +430,62 @@ right:10px;
          remove.classList.add('remove');
          remove.innerHTML = removeSVG;
 
-      });
+         inp.addEventListener('change',updatelineprice);
+
+         updatetotaladd();
+      }
+
+
+      var subtotal=0;
+
+      function updatetotaladd()
+      {
+        var query2=document.getElementById('country').value;
+
+
+        $.ajax({
+             url:"pdetails.php",
+             method:"POST",
+             data:{query:query2},
+             success:function(response)
+             {
+               response = jQuery.parseJSON(response);
+
+               var t=parseFloat(document.getElementById('totalprice').innerHTML);
+                   document.getElementById('totalprice').innerHTML=t+parseFloat(response.message);
+
+             }
+        });
+      }
+
+
+
+
+    function updatelineprice()
+     {
+       qua=this.value;
+        var par=this.parentNode.parentNode;
+        var pri=par.children[2].innerHTML;
+
+        par.children[0].innerHTML=qua*pri;
+
+        updatetotal();
+            }
+
+updatetotal();
+    function updatetotal()
+    {
+
+      var subtotal=0;
+      $('.todo li').each(function () {
+
+
+        subtotal += parseFloat(this.children[0].innerHTML);
+        
+          });
+
+          document.getElementById('totalprice').innerHTML=subtotal;
+    }
 
 
 
@@ -359,6 +494,7 @@ right:10px;
         var item=this.parentNode.parentNode;
         var parent=item.parentNode;
         parent.removeChild(item);
+        updatetotal();
       }
 
 
