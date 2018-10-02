@@ -137,15 +137,22 @@ right:10px;
     right:10px;
 }
 
+#spantotal
+{
+  float:left;
+  width:80%;
+  text-align: right;
+}
 #totalprice
 {
 
   float: right;
   text-align: right;
     clear: both;
-    width: 100%;
+    width: 20%;
     margin-bottom: 10px;
-
+    font-size: 20px;
+    padding-top: 11px;
 }
 /*
 1.Budget Setter
@@ -153,8 +160,7 @@ right:10px;
 3.BG color change on exceeding Budget
 4.Payment Gateway
 
-1.preplan me bhi price, quantity calc
-2.who + button barabar karna hai
+1.prplan ka + button barabar karna hai
 
 1.AR shopping recipe recommends
 2.Easter egg concept
@@ -164,7 +170,7 @@ right:10px;
 1.MAP
 
 1.Login section    rahul kar ra hai na?? haa
-
+2.googl
 
 isme kya karega ??
 purchase hist tho cust ka database banane ke baad hi chalu karsakte hai
@@ -306,7 +312,7 @@ phle namrata maam ko puchte hai{
 
 
 		<div id="search">
-			<input type="text" placeholder="Enter an activity.." id="country">
+			<input type="text" placeholder="Enter Product Name..." id="country">
 			<button id="addcart">
 				<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"viewBox="0 0 16 16" style="enable-background:new 0 0 16 16;" xml:space="preserve"><g><path class="fill" d="M16,8c0,0.5-0.5,1-1,1H9v6c0,0.5-0.5,1-1,1s-1-0.5-1-1V9H1C0.5,9,0,8.5,0,8s0.5-1,1-1h6V1c0-0.5,0.5-1,1-1s1,0.5,1,1v6h6C15.5,7,16,7.5,16,8z"/></g></svg>
 			</button>
@@ -318,11 +324,13 @@ phle namrata maam ko puchte hai{
 
 
                 <div id="countryList"></div>
-
+                <span id="spantotal" class="mdl-layout-title">Total :</span>
+                <div id="totalprice"></div>
                 <p>Cart Items</p>
+                <button id="sort">Sort</button>
                 <ul class="todo" id="todo"></ul>
 
-                <div id="totalprice"></div>
+
             </div>
           </div>
         </main>
@@ -366,6 +374,8 @@ phle namrata maam ko puchte hai{
          var list=document.getElementById('todo');
 
          var item= document.createElement('li');
+         item.setAttribute("id","listofproducts");
+
          item.innerText=input;
 
          var quantitydiv=document.createElement('div');
@@ -481,7 +491,7 @@ updatetotal();
 
 
         subtotal += parseFloat(this.children[0].innerHTML);
-        
+
           });
 
           document.getElementById('totalprice').innerHTML=subtotal;
@@ -496,6 +506,65 @@ updatetotal();
         parent.removeChild(item);
         updatetotal();
       }
+
+
+
+      document.getElementById('sort').addEventListener("click", sortList);
+
+
+      function sortList() {
+  var list, i, switching, b, shouldSwitch;
+  list = document.getElementById("todo");
+  switching = true;
+  /*Make a loop that will continue until
+  no switching has been done:*/
+  while (switching) {
+    //start by saying: no switching is done:
+    switching = false;
+    b = $('ul.todo li');
+    //Loop through all list-items:
+    for (i = 0; i < (b.length - 1); i++) {
+      //start by saying there should be no switching:
+      shouldSwitch = false;
+      /*check if the next item should
+      switch place with the current item:*/
+      if ( parseFloat(b[i].children[0].innerHTML) < parseFloat(b[i+1].children[0].innerHTML) ) {
+        /*if next item is alphabetically
+        lower than current item, mark as a switch
+        and break the loop:*/
+        shouldSwitch = true;
+        break;
+      }
+    }
+    if (shouldSwitch) {
+      /*If a switch has been marked, make the switch
+      and mark the switch as done:*/
+      b[i].parentNode.insertBefore(b[i + 1], b[i]);
+      switching = true;
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

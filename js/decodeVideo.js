@@ -1,4 +1,6 @@
+
 var $selectVideo = $('#selectVideo');
+
 var selectVideo = $selectVideo[0];
 var updateDevice = function(){
     navigator.mediaDevices.enumerateDevices().then(deviceInfos=>{
@@ -116,28 +118,114 @@ function cartitem(data)
   var list=document.getElementById('todo');
 
   var item= document.createElement('li');
-  item.innerText=data;
+
+  var productnamediv= document.createElement('div')
+
+  var quantitydiv=document.createElement('div');
+
+  var pricediv=document.createElement('div');
 
   var buttondiv=document.createElement('div');
 
+  var linepricediv=document.createElement('div');
+
+  var inp = document.createElement("INPUT");
+  inp.setAttribute("type", "number");
+  inp.setAttribute("value","1");
+  inp.setAttribute("id","quantity");
+
+
   var remove=document.createElement('button');
 
-  var t = document.createTextNode("Remove");
+
+  var query1=data;
+
+
+    $.ajax({
+         url:"scanpdetails.php",
+         method:"POST",
+         data:{query:query1},
+         success:function(response)
+         {
+           response = jQuery.parseJSON(response);
+              alert(response.price);
+
+              productnamediv.innerHTML=response.product_name;
+              pricediv.innerHTML=response.price;
+
+              linepricediv.innerHTML=response.price;
+         }
+    });
+
+
 
   list.appendChild(item);
 
-  item.appendChild(buttondiv);
+  item.appendChild(productnamediv);
 
+  item.appendChild(linepricediv);
+
+  item.appendChild(quantitydiv);
+  quantitydiv.appendChild(inp);
+  item.appendChild(pricediv);
+  item.appendChild(buttondiv);
   buttondiv.appendChild(remove);
 
-  remove.appendChild(t);
+
+
+  linepricediv.classList.add('linepricediv');
+  buttondiv.classList.add('butt');
+  pricediv.classList.add('pricediv');
+  quantitydiv.classList.add('quantitydiv');
+  productnamediv.classList.add('productnamediv');
+
+
+
 
 
   remove.addEventListener('click',removeitem);
+  var removeSVG ='<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/><path d="M0 0h24v24H0z" fill="none"/></svg>';
 
 
-  remove.className += "mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored mdl-color-text--white";
+  remove.classList.add('remove');
+  remove.innerHTML = removeSVG;
+
+  inp.addEventListener('change',updatelineprice);
+
+  updatetotaladd(data);
+
 }
+
+
+
+
+var subtotal=0;
+
+function updatetotaladd(data)
+{
+  var query2=data;
+alert(data);
+
+      $.ajax({
+           url:"scanpdetails.php",
+           method:"POST",
+           data:{query:query2},
+           success:function(response)
+           {
+             response = jQuery.parseJSON(response);
+
+
+                var t=parseFloat(document.getElementById('totalprice').innerHTML);
+                    document.getElementById('totalprice').innerHTML=t+parseFloat(response.price);
+
+
+           }
+      });
+
+}
+
+
+
 
 
 function removeitem()
@@ -145,4 +233,34 @@ function removeitem()
   var item=this.parentNode.parentNode;
   var parent=item.parentNode;
   parent.removeChild(item);
+  updatetotal();
+}
+
+
+updatetotal();
+
+function updatelineprice()
+{
+  qua=this.value;
+   var par=this.parentNode.parentNode;
+   var pri=par.children[3].innerHTML;
+
+   par.children[1].innerHTML=qua*pri;
+
+   updatetotal();
+}
+
+
+function updatetotal()
+{
+
+  var subtotal=0;
+  $('.todo li').each(function () {
+
+
+    subtotal += parseFloat(this.children[1].innerHTML);
+
+      });
+
+      document.getElementById('totalprice').innerHTML=subtotal;
 }
