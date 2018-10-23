@@ -14,7 +14,7 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-
+        <script src="https://viralpatel.net/blogs/demo/jquery/get-text-without-child-element/jquery.justtext.1.0.js"></script>
 
         <style>
 
@@ -154,6 +154,14 @@ right:10px;
     font-size: 20px;
     padding-top: 11px;
 }
+
+
+#genbill
+{
+position: relative;
+    text-align: right;
+  float:right;
+}
 /*
 1.Budget Setter
 2.Sort by price
@@ -244,6 +252,8 @@ phle namrata maam ko puchte hai{
           margin-bottom: 40px;
           z-index: 900;
         }
+
+
         </style>
 
     <!-- Add to home screen for Safari on iOS -->
@@ -294,7 +304,7 @@ phle namrata maam ko puchte hai{
           </header>
 
           <nav class="demo-navigation mdl-navigation mdl-color--blue-grey-800">
-            <a class="mdl-navigation__link" href="index.html"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i>Home</a>
+            <a class="mdl-navigation__link" href="index.php"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i>Home</a>
             <a class="mdl-navigation__link" href="#"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">add_shopping_cart</i>Preplan Purchase</a>
             <a class="mdl-navigation__link" href="ar/index.html"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">control_camera</i>AR Shopping</a>
             <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">history</i>Purchase History</a>
@@ -330,6 +340,7 @@ phle namrata maam ko puchte hai{
                 <button id="sort">Sort</button>
                 <ul class="todo" id="todo"></ul>
 
+                <button id="savepre" class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-button--colored">Save preplan</button>
 
             </div>
           </div>
@@ -413,7 +424,7 @@ phle namrata maam ko puchte hai{
          });
 
 
-         list.appendChild(item);
+         list.insertBefore(item, list.childNodes[0]);
 
          item.appendChild(linepricediv);
 
@@ -466,6 +477,10 @@ phle namrata maam ko puchte hai{
 
              }
         });
+
+
+                 document.getElementById('country').value="";
+
       }
 
 
@@ -547,33 +562,65 @@ updatetotal();
 
 
 
+  var savepre=document.getElementById('savepre');
+   savepre.addEventListener('click',saveprefn);
 
 
 
 
 
+ function saveprefn()
+ {
+
+
+    var TableData;
+    TableData = storeTblValues()
+    TableData = $.toJSON(TableData);
+
+    alert(TableData);
+
+    function storeTblValues()
+    {
+        var TableData = new Array();
+
+        $('.todo li').each(function(row){
+
+
+            TableData[row]={
+                "pname" : this.childNodes[0].nodeValue
+                , "qua" :this.children[1].children[0].value
+                }
+          row=row+1;
+
+
+        });
+
+
+        return TableData;
+    }
+
+
+
+    $.ajax({
+    url: "storepredb.php",
+    method: "POST",
+    data: {pTableData:TableData} ,
+    success: function(msg){
+        // return value stored in msg variable
+        alert(msg);
+    }
+});
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+ }
 
 
        </script>
 
 
-
-
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-json/2.6.0/jquery.json.min.js"></script>
       <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
   </body>
   </html>

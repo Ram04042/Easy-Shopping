@@ -1,3 +1,4 @@
+document.getElementById('viewpre').addEventListener("click", showpre);
 
 var $selectVideo = $('#selectVideo');
 
@@ -35,8 +36,8 @@ var playvideo = ()=>{
     kConsoleLog('======before video========');
     var constraints = {
         video: {
-            width: { ideal: 1280 },
-            height: { ideal: 720 },
+          height: { ideal: 180 },
+            width: { ideal: 400 },
             facingMode: { ideal: 'environment' }
         }
     };
@@ -159,7 +160,7 @@ function cartitem(data)
 
 
 
-  list.appendChild(item);
+  list.insertBefore(item, list.childNodes[0]);
 
   item.appendChild(productnamediv);
 
@@ -222,6 +223,8 @@ alert(data);
            }
       });
 
+
+
 }
 
 
@@ -263,4 +266,192 @@ function updatetotal()
       });
 
       document.getElementById('totalprice').innerHTML=subtotal;
+}
+
+
+function showpre()
+{
+  var x;
+var query2=1;
+  $.ajax({
+       url:"showpre.php",
+       method:"POST",
+       data:{query:query2},
+       success:function(response)
+       {
+         response = jQuery.parseJSON(response);
+
+
+         var x;
+        for (x in response) {
+            add(response[x].Product_ID,response[x].Quantity);
+        }
+
+
+
+
+     }
+  });
+
+
+
+}
+
+
+
+function add(prod,qua){
+
+  var input=prod;
+  var quan=qua;
+
+  var list=document.getElementById('pretodo');
+
+  var item= document.createElement('li');
+  item.setAttribute("id","listofproducts");
+
+  item.innerText=input;
+
+  var quantitydiv=document.createElement('div');
+
+  var pricediv=document.createElement('div');
+
+  var buttondiv=document.createElement('div');
+
+  var linepricediv=document.createElement('div');
+
+  var inp = document.createElement("INPUT");
+  inp.setAttribute("type", "number");
+  inp.setAttribute("value",quan);
+  inp.setAttribute("id","quantity");
+
+
+  var remove=document.createElement('button');
+
+
+  var query1= input;
+
+  $.ajax({
+       url:"pdetails.php",
+       method:"POST",
+       data:{query:query1},
+       success:function(response)
+       {
+         response = jQuery.parseJSON(response);
+
+             pricediv.innerHTML=response.message;
+             var pri=response.message
+             linepricediv.innerHTML= quan*pri;
+
+       }
+  });
+
+
+  list.insertBefore(item, list.childNodes[0]);
+
+  item.appendChild(linepricediv);
+
+  item.appendChild(quantitydiv);
+  quantitydiv.appendChild(inp);
+  item.appendChild(pricediv);
+  item.appendChild(buttondiv);
+  buttondiv.appendChild(remove);
+
+
+  linepricediv.classList.add('linepricediv');
+  buttondiv.classList.add('butt');
+  pricediv.classList.add('pricediv');
+  quantitydiv.classList.add('quantitydiv');
+
+
+
+
+
+  remove.addEventListener('click',removeitem);
+  var removeSVG ='<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/><path d="M0 0h24v24H0z" fill="none"/></svg>';
+
+
+  remove.classList.add('remove');
+  remove.innerHTML = removeSVG;
+
+
+}
+
+
+
+var genbill=document.getElementById('genbill');
+
+genbill.addEventListener("click", genbillfn);
+
+function genbillfn()
+{
+
+
+  var TableData;
+  TableData = storeTblValues()
+  TableData = $.toJSON(TableData);
+
+  alert(TableData);
+
+  function storeTblValues()
+  {
+      var TableData = new Array();
+
+      $('.todo li').each(function(row){
+
+
+          TableData[row]={
+              "pname" : this.childNodes[0].innerHTML
+              , "qua" :this.children[2].children[0].value
+              }
+        row=row+1;
+
+
+      });
+
+
+      return TableData;
+  }
+
+
+
+  $.ajax({
+  url: "updatestockdb.php",
+  method: "POST",
+  data: {pTableData:TableData} ,
+  success: function(msg){
+      // return value stored in msg variable
+      alert(msg);
+  }
+});
+
+
+
+  $.ajax({
+  url: "storepurchasehist.php",
+  method: "POST",
+  data: {pTableData:TableData} ,
+  success: function(msg){
+      // return value stored in msg variable
+      alert(msg);
+  }
+});
+
+var text="1";
+makeCode(text);
+
+}
+
+
+
+
+var qrcode = new QRCode(document.getElementById("qrcode"), {
+	width : 100,
+	height : 100
+});
+
+function makeCode (text) {
+	var elText = text;
+
+
+	qrcode.makeCode(elText);
 }
